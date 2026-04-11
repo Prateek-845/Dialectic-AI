@@ -18,7 +18,7 @@ def main():
     st.set_page_config(page_title="Dialectic AI", layout="wide")
     
     if not os.getenv("GROQ_API_KEY"):
-        st.error("Missing GROQ_API_KEY in .env file!")
+        st.error("Missing GROQ_API_KEY! Please set it in your .env file (for local use) or in the Streamlit Cloud 'Secrets' settings (for deployment).")
         st.stop()
         
     st.title("Dialectic AI: Agentic News Neutralizer")

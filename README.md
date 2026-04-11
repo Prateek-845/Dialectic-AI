@@ -1,6 +1,6 @@
 # 🧠 Dialectic AI: The Verifiable News Synthesis Engine
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://prateek-845-dialectic-ai-app-eaipze.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app/)
 
 Welcome to **Dialectic AI**, a research-grade NLP system designed to solve media bias and AI hallucinations through an adversarial, fact-grounded "Dialectic" framework.
 
