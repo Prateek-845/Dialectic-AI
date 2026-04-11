@@ -1,0 +1,26 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.hypothesis/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# spaCy models
+en_core_web_md/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.pptx
+.agents/
+.kiro/
