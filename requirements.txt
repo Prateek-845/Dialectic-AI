@@ -2,6 +2,7 @@ streamlit==1.42.0
 langchain-groq==0.2.4
 langgraph==0.2.68
 spacy==3.7.6
+numpy<2.0.0
 sentence-transformers==3.4.1
 python-dotenv==1.0.1
 ddgs
@@ -11,3 +12,4 @@ textblob
 pydantic
 langchain-core
 langchain-community
+https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.7.1/en_core_web_md-3.7.1-py3-none-any.whl
