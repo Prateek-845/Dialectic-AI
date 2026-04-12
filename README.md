@@ -2,7 +2,7 @@
 
 **Live Application:** [dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app](https://dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app/)
 
-Dialectic AI is a research-grade NLP system designed to address media bias and AI hallucinations through an adversarial, fact-grounded Dialectic framework.
+Dialectic AI is a research-grade NLP system designed to address media bias and AI hallucinations through an adversarial, fact-grounded Dialectic framework. It is a LangGraph powered multi-agent debate system for synthesizing neutral news through RAG based fact checking and iterative reflexion loops
 
 ## The Core Philosophy: The Dialectic
 Inspired by the Hegelian Dialectic (Thesis + Antithesis = Synthesis), this project moves beyond simple summarization. Modern news is often polarized; Dialectic AI neutralizes this by forcing two specialized agents into a controlled debate:
