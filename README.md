@@ -13,6 +13,8 @@ Inspired by the Hegelian Dialectic (Thesis + Antithesis = Synthesis), this proje
 ## High-Level Architecture
 Built on LangGraph, the system operates as a multi-agent state machine. Unlike a linear prompt chain, Dialectic AI features cyclic reasoning and autonomous Reflexion loops.
 
+![System Architecture](diagram.png)
+
 ### The Graph Pipeline
 1. Analyst Node: Dynamically assigns professional personas to the agents based on the article's topic.
 2. Adversarial Nodes: Challenger and Supporter agents generate contrasting summaries of the news.
