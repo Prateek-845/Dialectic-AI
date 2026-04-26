@@ -1,4 +1,4 @@
-# Dialectic AI: Neutral News Summarization
+# Dialectic AI: RAG based News Neutralizer via Fact Grounded Multiagent Debate
 
 
 **Live Application:** [dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app](https://dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app/)
