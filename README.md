@@ -1,4 +1,5 @@
-# Dialectic AI: The Verifiable News Synthesis Engine
+# Dialectic AI: Neutral News Summarization
+
 
 **Live Application:** [dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app](https://dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app/)
 
