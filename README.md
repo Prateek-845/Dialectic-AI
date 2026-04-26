@@ -19,8 +19,8 @@ Built on LangGraph, the system operates as a multi agent state machine. Unlike a
 ### The Graph Pipeline
 1. Analyst Node: Dynamically assigns professional personas to the agents based on the article's topic.
 2. Adversarial Nodes: Challenger and Supporter agents generate contrasting summaries of the news.
-3. Fact Checker Node: An algorithmic engine that performs deep linguistic cross-referencing between the AI's claims and the source.
-4. Fallacy Detector: A node that uses Chain-of-Thought (CoT) to critique the agents' logic.
+3. Fact Checker Node: An algorithmic engine that performs deep linguistic cross referencing between the AI's claims and the source.
+4. Fallacy Detector: A node that uses LLM as Judge to critique the agents' logic.
 5. Router Logic: If an agent's Authority Score is too low, the graph autonomously loops back for a Reflexion rewrite.
 6. Mediator Node: Synthesizes the final report using the most verified points from both sides.
 
