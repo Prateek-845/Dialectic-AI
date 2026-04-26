@@ -22,7 +22,7 @@ def main():
         st.stop()
         
     st.title("Dialectic AI: Agentic News Neutralizer")
-    st.caption("A dynamic, RAG-enabled debate with zero-hallucination NLP checks.")
+    st.caption("A dynamic RAG enabled multi agent debate with fact checking and hallucination mitigation.")
     
     # Session state initialization for UI flow
     if "debate_started" not in st.session_state:
