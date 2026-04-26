@@ -3,15 +3,15 @@
 
 **Live Application:** [dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app](https://dialectic-ai-ahdhkarxnqe9m7bddt5jhw.streamlit.app/)
 
-Dialectic AI is a research-grade NLP system designed to address media bias and AI hallucinations through an adversarial, fact-grounded Dialectic framework. It is a LangGraph powered multi-agent debate system for synthesizing neutral news through RAG based fact checking and iterative reflexion loops
+Dialectic AI is a RAG based application that leverages LangGraph to orchestrate a multi agent debate system designed to transform polarized news into objective and fact grounded synthesis. The system utilizes a stateful workflow of specialized AI agents including Debaters that argue opposing perspectives, a Fact Checker  that grounds claims using external search and penalizes contradictions via DeBERTa, a Fallacy Checker that flags logical inconsistencies, and a Mediator that evaluates the debate to generate a final, neutral summary. By structuring this interaction as a directed graph, the project provides an interactive streamlit dashboard where users can monitor the reasoning pipeline, track source credibility via quantitative metrics like Authority Scores and read an unbiased distillation of complex current events.
 
 ## The Core Philosophy: The Dialectic
-Inspired by the Hegelian Dialectic (Thesis + Antithesis = Synthesis), this project moves beyond simple summarization. Modern news is often polarized; Dialectic AI neutralizes this by forcing two specialized agents into a controlled debate:
+Inspired by the Hegelian Dialectic (Thesis + Antithesis = Synthesis), this project moves beyond simple summarization. Modern news is often polarized, Dialectic AI neutralizes this by forcing two specialized agents into a controlled debate:
 * **The Supporter (Thesis):** Defends the core claims of the input text.
 * **The Challenger (Antithesis):** Scrutinizes biases, identifying logical leaps and omissions.
 * **The Mediator (Synthesis):** Evaluates the debate, prioritizes factually grounded arguments, and produces a final, objective synthesis.
 
-## High-Level Architecture
+## High Level Architecture
 Built on LangGraph, the system operates as a multi-agent state machine. Unlike a linear prompt chain, Dialectic AI features cyclic reasoning and autonomous Reflexion loops.
 
 ![System Architecture](diagram.png)
