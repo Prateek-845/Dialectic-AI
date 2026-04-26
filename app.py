@@ -200,7 +200,7 @@ def main():
                     status.update(label="Synthesis Complete!", state="complete", expanded=False)
                 else:
                     iter_num = event.get('iteration', 0)
-                    status.update(label=f"Generating arguments & Fact-checking (Round {iter_num+1})...")
+                    status.update(label=f"Generating arguments & Fact checking (Round {iter_num+1})")
             
             st.session_state.final_end_state = final_end_state
             st.rerun()
@@ -208,7 +208,7 @@ def main():
     final_end_state = st.session_state.final_end_state
 
     # --- Dashboard Layout: Tabs ---
-    tab1, tab2 = st.tabs(["Live Debate & Fact Check", "Final Synthesis Report"])
+    tab1, tab2 = st.tabs(["Debate Log", "Final Synthesis"])
     
     with tab1:
         st.markdown("### Agentic Debate Log")
@@ -241,7 +241,7 @@ def main():
             col_rep, col_met = st.columns([1.5, 1])
             
             with col_rep:
-                st.markdown("### Mediator's Neutral Synthesis")
+                st.markdown("### Neutral Synthesis by Mediator")
                 st.info(final_end_state["final_summary"])
                 
             with col_met:
