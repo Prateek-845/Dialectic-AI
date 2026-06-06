@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bg-primary text-text-primary font-sans antialiased m-0;
+  }
+}
+
+/* Subtle, professional entity highlighting */
+.entity-verified {
+  @apply bg-emerald-500/10 border-b border-emerald-500/50 font-medium px-1 rounded-sm text-emerald-400;
+}
+
+.entity-unverified {
+  @apply bg-rose-500/10 border-b border-rose-500/50 font-medium px-1 rounded-sm text-rose-400;
+}
+
+.entity-web {
+  @apply bg-blue-500/10 border-b border-blue-500/50 font-medium px-1 rounded-sm text-blue-400;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  @apply w-10 h-10 border-2 border-white/5 border-t-accent-blue rounded-full mx-auto mb-4;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background-color: #020617 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-w-full {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
