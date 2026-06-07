@@ -31,6 +31,8 @@ def load_spacy_model():
 
 @functools.lru_cache(maxsize=1)
 def load_nli_model():
+    if os.getenv("RENDER"):
+        return None
     try:
         import warnings
         with warnings.catch_warnings():
