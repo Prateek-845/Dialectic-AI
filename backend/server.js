@@ -89,13 +89,15 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
 
     response.data.pipe(res);
 
+    let buffer = '';
     response.data.on('data', (chunk) => {
-      const chunkStr = chunk.toString();
-      const lines = chunkStr.split('\n');
-      for (const line of lines) {
-        if (line.startsWith('data: ') && !line.includes('[DONE]')) {
+      buffer += chunk.toString();
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop();
+      for (const part of parts) {
+        if (part.startsWith('data: ') && !part.includes('[DONE]')) {
           try {
-            finalState = JSON.parse(line.substring(6));
+            finalState = JSON.parse(part.substring(6));
           } catch(e) {}
         }
       }
