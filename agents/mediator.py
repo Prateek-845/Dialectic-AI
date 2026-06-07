@@ -8,32 +8,22 @@ import re
 from textblob import TextBlob
 from rouge_score import rouge_scorer
 from state import GraphState
+from utils.tools import generate_argument
 from config import get_llm
 
-def mediator_node(state: GraphState) -> dict:
-    a_score, b_score = state.get("a_score", 0.0), state.get("b_score", 0.0)
+async def mediator_node(state: GraphState) -> dict:
     a_sum, b_sum = state.get("agent_a_summary", ""), state.get("agent_b_summary", "")
     llm = get_llm("MEDIATOR", max_tokens=400)
     
     prompt = (
         "You are the Mediator. Write a 200-word final, neutral synthesis of the debate.\n\n"
-        f"Persona A ({state.get('persona_a', 'A')}) Score: {a_score}\nArgument:\n{a_sum}\n\n"
-        f"Persona B ({state.get('persona_b', 'B')}) Score: {b_score}\nArgument:\n{b_sum}\n\n"
-    )
-    prompt += (
+        f"Persona A ({state.get('persona_a', 'A')}) Score: {state.get('a_score', 0.0)}\nArgument:\n{a_sum}\n\n"
+        f"Persona B ({state.get('persona_b', 'B')}) Score: {state.get('b_score', 0.0)}\nArgument:\n{b_sum}\n\n"
         "Write a final, completely neutral synthesis (approx 200 words) summarizing the core truth. "
-        "IMPORTANT: You must enclose your final synthesis strictly within <SYNTHESIS> and </SYNTHESIS> tags. "
-        "Do not output any internal thoughts outside these tags."
+        "Enclose strictly within <SYNTHESIS>...</SYNTHESIS> tags."
     )
     
-    result = llm.invoke([HumanMessage(content=prompt)])
-    content = result.content.strip()
-    
-    match = re.search(r'<SYNTHESIS>(.*?)</SYNTHESIS>', content, re.DOTALL)
-    if match:
-        final_text = match.group(1).strip()
-    else:
-        final_text = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+    final_text = await generate_argument(llm, prompt, "SYNTHESIS")
     
 
     scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)

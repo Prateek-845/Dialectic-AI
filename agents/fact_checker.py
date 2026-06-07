@@ -18,43 +18,36 @@ def fact_checker_node(state: GraphState) -> dict:
     doc_art = nlp(article)
     article_ents = {ent.text.lower() for ent in doc_art.ents if ent.label_ not in ["CARDINAL", "ORDINAL"]}
     
+    def make_span(t: str, bg: str, fg: str, title: str) -> str:
+        return f'<span style="background-color: {bg}; color: {fg}; padding: 2px; border-radius: 3px;" title="{title}">{t}</span>'
+
     def score_and_highlight(summary_text: str) -> tuple[float, str]:
-        if not summary_text:
-            return 0.0, ""
-            
+        if not summary_text: return 0.0, ""
         doc_sum = nlp(summary_text)
-        cited = 0
-        total_ents = 0
+        cited, total_ents, last_idx, web_search_count = 0, 0, 0, 0
         highlighted_words = []
-        last_idx = 0
-        web_search_count = 0
-        
 
         for ent in doc_sum.ents:
-            if ent.label_ in ["CARDINAL", "ORDINAL"]:
-                continue
+            if ent.label_ in ["CARDINAL", "ORDINAL"]: continue
             total_ents += 1
             highlighted_words.append(summary_text[last_idx:ent.start_char])
-            
 
             if ent.text.lower() in article_ents:
                 cited += 1
-                highlighted_words.append(f'<span style="background-color: #d4edda; color: #155724; padding: 2px; border-radius: 3px;" title="Verified Entity">{ent.text}</span>')
-            else:
-                if web_search_count < 5:
-                    search_res = perform_web_search(ent.text + " " + article[:50])
-                    web_search_count += 1
-                    if ent.text.lower() in search_res.lower() and "No external" not in search_res:
-                        cited += 1
-                        highlighted_words.append(f'<span style="background-color: #cce5ff; color: #004085; padding: 2px; border-radius: 3px;" title="Verified via Web">{ent.text}</span>')
-                    else:
-                        highlighted_words.append(f'<span style="background-color: #f8d7da; color: #721c24; padding: 2px; border-radius: 3px;" title="Unverified/Hallucinated">{ent.text}</span>')
+                highlighted_words.append(make_span(ent.text, "#d4edda", "#155724", "Verified Entity"))
+            elif web_search_count < 5:
+                res = perform_web_search(f"{ent.text} {article[:50]}")
+                web_search_count += 1
+                if ent.text.lower() in res.lower() and "No external" not in res:
+                    cited += 1
+                    highlighted_words.append(make_span(ent.text, "#cce5ff", "#004085", "Verified via Web"))
                 else:
-                    highlighted_words.append(f'<span style="background-color: #f8d7da; color: #721c24; padding: 2px; border-radius: 3px;" title="Unverified (Rate Limited)">{ent.text}</span>')
+                    highlighted_words.append(make_span(ent.text, "#f8d7da", "#721c24", "Unverified"))
+            else:
+                highlighted_words.append(make_span(ent.text, "#f8d7da", "#721c24", "Rate Limited"))
             last_idx = ent.end_char
             
         highlighted_words.append(summary_text[last_idx:])
-        
         base_score = (cited / total_ents) if total_ents > 0 else 0.5
         
 

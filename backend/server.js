@@ -41,39 +41,29 @@ const authenticateToken = (req, res, next) => {
 };
 
 
+const signToken = (user, res, status = 200) => {
+  const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '24h' });
+  res.status(status).json({ token, username: user.username });
+};
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
-    
-    const existingUser = await User.findOne({ username });
-    if (existingUser) return res.status(400).json({ error: 'Username already taken' });
+    if (!username || !password) return res.status(400).json({ error: 'Credentials required' });
+    if (await User.findOne({ username })) return res.status(400).json({ error: 'Username taken' });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword });
-    await newUser.save();
-
-    const token = jwt.sign({ id: newUser._id, username: newUser.username }, JWT_SECRET, { expiresIn: '24h' });
-    res.status(201).json({ token, username: newUser.username });
-  } catch (error) {
-    res.status(500).json({ error: 'Registration failed' });
-  }
+    const newUser = await new User({ username, password: await bcrypt.hash(password, 10) }).save();
+    signToken(newUser, res, 201);
+  } catch (e) { res.status(500).json({ error: 'Registration failed' }); }
 });
 
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
-    if (!user) return res.status(400).json({ error: 'Invalid username or password' });
-
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(400).json({ error: 'Invalid username or password' });
-
-    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '24h' });
-    res.json({ token, username: user.username });
-  } catch (error) {
-    res.status(500).json({ error: 'Login failed' });
-  }
+    if (!user || !(await bcrypt.compare(password, user.password))) return res.status(400).json({ error: 'Invalid credentials' });
+    signToken(user, res);
+  } catch (e) { res.status(500).json({ error: 'Login failed' }); }
 });
 
 

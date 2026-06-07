@@ -58,41 +58,30 @@ def fetch_url_content(url: str) -> str:
 from fastapi.responses import StreamingResponse
 import json
 
+import asyncio
+
 @app.post("/analyze/stream")
 async def analyze_article_stream(req: AnalyzeRequest):
-    if not req.article:
-        raise HTTPException(status_code=400, detail="Article text is required.")
+    if not req.article: raise HTTPException(status_code=400, detail="Article text is required.")
         
-    def generate():
+    async def generate():
         try:
-
-            actual_article_text = req.article
-            if actual_article_text.startswith("http://") or actual_article_text.startswith("https://"):
-                actual_article_text = fetch_url_content(actual_article_text)
+            actual_article = req.article
+            if actual_article.startswith(("http://", "https://")):
+                actual_article = await asyncio.to_thread(fetch_url_content, actual_article)
                 
             graph = build_graph()
             config = {"configurable": {"thread_id": req.thread_id}}
-            
-
             current_state = graph.get_state(config)
             
             if current_state.next:
-
-                update_payload = {}
-                if req.action:
-                    update_payload["force_route"] = req.action
-                if req.jury_feedback:
-                    update_payload["jury_feedback"] = req.jury_feedback
-                    
+                update_payload = {k: v for k, v in [("force_route", req.action), ("jury_feedback", req.jury_feedback)] if v}
                 if update_payload:
                     graph.update_state(config, update_payload)
-                    
-
-                for event in graph.stream(None, config=config, stream_mode="values"):
+                async for event in graph.astream(None, config=config, stream_mode="values"):
                     yield f"data: {json.dumps(event)}\n\n"
             else:
-
-                for event in graph.stream({"original_article": actual_article_text}, config=config, stream_mode="values"):
+                async for event in graph.astream({"original_article": actual_article}, config=config, stream_mode="values"):
                     yield f"data: {json.dumps(event)}\n\n"
                     
             yield "data: [DONE]\n\n"
