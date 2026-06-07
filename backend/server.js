@@ -17,7 +17,7 @@ const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://localhost:8000';
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/dialectic', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -27,7 +27,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/dialectic
   console.error('MongoDB connection error:', err);
 });
 
-// JWT Middleware
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -40,7 +40,7 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Auth Routes
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -76,7 +76,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// API Routes
+
 app.post('/api/debates/stream', authenticateToken, async (req, res) => {
   try {
     const { article, thread_id, action, jury_feedback } = req.body;
@@ -85,7 +85,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders(); // Force headers to be sent immediately so the browser knows it's a stream
+    res.flushHeaders();
 
     const response = await axios({
       method: 'post',
@@ -96,11 +96,11 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
 
     let finalState = null;
 
-    // Pipe the python stream directly to the express response to prevent any Node.js buffering
+
     response.data.pipe(res);
 
     response.data.on('data', (chunk) => {
-      // We still listen to chunks to capture the final state for MongoDB
+
       const chunkStr = chunk.toString();
       const lines = chunkStr.split('\n');
       for (const line of lines) {
@@ -114,7 +114,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
 
     response.data.on('end', async () => {
       res.end();
-      // Save final state to MongoDB
+
       if (finalState && finalState.final_summary) {
         try {
           const newDebate = new Debate({

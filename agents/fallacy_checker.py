@@ -38,7 +38,7 @@ def fallacy_checker_node(state: GraphState) -> dict:
     new_a, critique_a = check_fallacy(sum_a, a_score)
     new_b, critique_b = check_fallacy(sum_b, b_score)
     
-    # Store the log after ALL score penalties are calculated
+
     log = state.get("debate_log", [])
     log.append({
         "iteration": state.get("iteration", 1),

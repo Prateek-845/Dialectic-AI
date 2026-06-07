@@ -10,7 +10,7 @@ import spacy
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 
-# Suppress noise
+
 logging.getLogger("sentence_transformers").setLevel(logging.ERROR)
 logging.getLogger("transformers").setLevel(logging.ERROR)
 warnings.filterwarnings("ignore", category=FutureWarning)

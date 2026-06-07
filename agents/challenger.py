@@ -14,7 +14,7 @@ def challenger_node(state: GraphState) -> dict:
     iteration = state.get("iteration", 0)
     llm = get_llm("A", max_tokens=300) # Heterogeneous model
     
-    # Run a web search based on the article's first 100 characters to get external context
+
     search_context = perform_web_search(article[:100] + " controversy criticism")
     
     prompt = f"You are playing the role of a {persona}.\n\n"
@@ -44,12 +44,12 @@ def challenger_node(state: GraphState) -> dict:
     content = result.content.strip()
     
     import re
-    # Extract just the argument, ignoring any chain-of-thought leaked outside the tags
+
     match = re.search(r'<ARGUMENT>(.*?)</ARGUMENT>', content, re.DOTALL)
     if match:
         content = match.group(1).strip()
     else:
-        # Fallback to stripping common deepseek think tags
+
         content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
         
     return {"agent_a_summary": content}

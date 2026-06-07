@@ -14,7 +14,7 @@ def fact_checker_node(state: GraphState) -> dict:
     nli_model = load_nli_model()
     iteration = state.get("iteration", 0)
     
-    # 1. Extract Named Entities from the Original Article
+
     doc_art = nlp(article)
     article_ents = {ent.text.lower() for ent in doc_art.ents if ent.label_ not in ["CARDINAL", "ORDINAL"]}
     
@@ -28,19 +28,19 @@ def fact_checker_node(state: GraphState) -> dict:
         highlighted_words = []
         last_idx = 0
         
-        # Iterate over characters and inject HTML tags around entities
+
         for ent in doc_sum.ents:
             if ent.label_ in ["CARDINAL", "ORDINAL"]:
                 continue
             total_ents += 1
             highlighted_words.append(summary_text[last_idx:ent.start_char])
             
-            # Check if this entity was actually in the original article!
+
             if ent.text.lower() in article_ents:
                 cited += 1
                 highlighted_words.append(f'<span style="background-color: #d4edda; color: #155724; padding: 2px; border-radius: 3px;" title="Verified Entity">{ent.text}</span>')
             else:
-                # Multi-Source Fact Check
+
                 search_res = perform_web_search(ent.text + " " + article[:50])
                 if ent.text.lower() in search_res.lower() and "No external" not in search_res:
                     cited += 1
@@ -53,7 +53,7 @@ def fact_checker_node(state: GraphState) -> dict:
         
         base_score = (cited / total_ents) if total_ents > 0 else 0.5
         
-        # 2. Check NLI Contradiction
+
         penalty = 0.0
         if nli_model:
             sentences = [sent.text for sent in doc_sum.sents]

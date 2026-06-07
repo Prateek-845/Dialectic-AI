@@ -35,7 +35,7 @@ def mediator_node(state: GraphState) -> dict:
     else:
         final_text = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
     
-    # 1. ROUGE Score (Information Conservation)
+
     scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
     r_scores = scorer.score(state["original_article"], final_text)
     synthesis_rouge = {
@@ -43,7 +43,7 @@ def mediator_node(state: GraphState) -> dict:
         "rougeL": round(r_scores['rougeL'].fmeasure, 3)
     }
     
-    # 2. Sentiment Neutrality (Bias Reduction)
+
     article_blob = TextBlob(state["original_article"])
     syn_blob = TextBlob(final_text)
     synthesis_neutral = {
@@ -51,7 +51,7 @@ def mediator_node(state: GraphState) -> dict:
         "synthesis_polarity": round(syn_blob.sentiment.polarity, 3)
     }
 
-    # 3. Debate Influence (Whose points did the mediator use?)
+
     score_a = scorer.score(a_sum, final_text)['rougeL'].fmeasure
     score_b = scorer.score(b_sum, final_text)['rougeL'].fmeasure
     total_influence = score_a + score_b if (score_a + score_b) > 0 else 1.0

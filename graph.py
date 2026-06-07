@@ -22,7 +22,7 @@ def router_logic(state: GraphState) -> str:
     it = state.get("iteration", 1)
     a_s, b_s = state.get("a_score", 0.0), state.get("b_score", 0.0)
     
-    # If scores are terrible and we haven't looped too many times, loop back to Challenger
+
     if (a_s < 0.35 or b_s < 0.35) and it <= 1:
         return "rewrite"
     return "mediator"
@@ -39,14 +39,14 @@ def build_graph():
     builder.add_node("fallacy_checker", fallacy_checker_node)
     builder.add_node("mediator", mediator_node)
     
-    # Draw the edges
+
     builder.set_entry_point("analyst")
     builder.add_edge("analyst", "challenger")
     builder.add_edge("challenger", "supporter")
     builder.add_edge("supporter", "fact_checker")
     builder.add_edge("fact_checker", "fallacy_checker")
     
-    # Conditional Routing
+
     builder.add_conditional_edges("fallacy_checker", router_logic, {
         "rewrite": "challenger",
         "mediator": "mediator"
@@ -54,7 +54,7 @@ def build_graph():
     
     builder.add_edge("mediator", END)
     
-    # Compile the graph with memory to allow pausing
+
     memory = MemorySaver()
     graph = builder.compile(checkpointer=memory, interrupt_after=["fallacy_checker"])
     return graph

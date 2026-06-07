@@ -21,13 +21,13 @@ function App() {
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  // Human-in-the-loop State
+
   const [threadId, setThreadId] = useState(null);
   const [juryFeedback, setJuryFeedback] = useState('');
   const [isPaused, setIsPaused] = useState(false);
   const resultsContainerRef = useRef(null);
 
-  // Authentication Handlers
+
   const handleAuth = async (e) => {
     e.preventDefault();
     setAuthError('');
@@ -212,7 +212,7 @@ function App() {
     <div className="min-h-screen bg-bg-primary font-sans">
       <div className="max-w-[1400px] mx-auto px-6 py-8 flex gap-8">
 
-        {/* Sidebar History (Hidden on Print) */}
+
         {showHistory && (
           <aside className="w-72 flex-shrink-0 border-r border-white/5 pr-6 h-[calc(100vh-4rem)] overflow-y-auto sticky top-8 no-print">
             <div className="flex justify-between items-center mb-6">
@@ -246,9 +246,9 @@ function App() {
           </aside>
         )}
 
-        {/* Main Content */}
+
         <main className="flex-1 print-w-full">
-          {/* Header */}
+
           <header className="flex justify-between items-center mb-10 pb-6 border-b border-white/5 no-print">
             <h1 className="text-lg font-semibold tracking-tight text-white flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-white"></div>
@@ -261,7 +261,7 @@ function App() {
             </div>
           </header>
 
-          {/* Input Area */}
+
           {!result && !loading && (
             <div className="max-w-2xl mx-auto mt-12 animate-fade-in no-print">
               <h2 className="text-2xl font-semibold mb-2 text-white tracking-tight">New Analysis</h2>
@@ -288,7 +288,7 @@ function App() {
             </div>
           )}
 
-          {/* Loading State */}
+
           {loading && !result && (
             <div className="flex flex-col items-center justify-center py-32 animate-pulse no-print">
               <div className="w-8 h-8 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4"></div>
@@ -296,11 +296,11 @@ function App() {
             </div>
           )}
 
-          {/* Result Area */}
+
           {result && (
             <div className="animate-fade-in print:bg-transparent" ref={resultsContainerRef}>
 
-              {/* Actions */}
+
               <div className="flex justify-between items-center mb-8 no-print">
                 <div className="flex items-center gap-3">
                   <button onClick={() => { setResult(null); setLoading(false); setArticle(''); setIsPaused(false); setThreadId(null); setJuryFeedback(''); }} className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2">
@@ -325,7 +325,7 @@ function App() {
 
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
 
-                {/* Left Column: Debate Log */}
+
                 <div className="space-y-6">
                   <h3 className="text-sm font-semibold text-gray-300 tracking-wide uppercase">Argument Trace</h3>
 
@@ -340,7 +340,7 @@ function App() {
                       <div key={idx} className="bg-card-bg rounded-xl border border-white/5 p-5">
                         <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-4">Round {round.iteration}</div>
 
-                        {/* Agent A */}
+
                         <div className="mb-6">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
@@ -352,7 +352,7 @@ function App() {
                           <div className="text-gray-400 leading-relaxed text-[13px] pl-3 border-l border-white/5" dangerouslySetInnerHTML={{ __html: round.highlighted_text_a }} />
                         </div>
 
-                        {/* Agent B */}
+
                         <div>
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
@@ -366,7 +366,7 @@ function App() {
                       </div>
                     ))}
 
-                    {/* Live Typing Placeholder */}
+
                     {loading && (result.agent_a_summary || result.agent_b_summary) && (
                       <div className="bg-card-bg rounded-xl border border-white/10 p-5 relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-white/20 animate-pulse"></div>
@@ -396,7 +396,7 @@ function App() {
                       </div>
                     )}
 
-                    {/* Pause State */}
+
                     {isPaused && (
                       <div className="bg-blue-900/10 rounded-xl border border-blue-500/20 p-5 no-print">
                         <h4 className="text-blue-400 text-sm font-medium mb-2">Human Intervention Required</h4>
@@ -420,7 +420,7 @@ function App() {
                   </div>
                 </div>
 
-                {/* Right Column: Synthesis & Metrics */}
+
                 <div className="space-y-6">
                   {result.final_summary && (
                     <div>
@@ -438,7 +438,7 @@ function App() {
                       <h3 className="text-sm font-semibold text-gray-300 tracking-wide uppercase mb-4">Metrics</h3>
                       <div className="space-y-4">
 
-                        {/* Bento Row 1: ROUGE */}
+
                         <div className="grid grid-cols-2 gap-3">
                           <div className="bg-card-bg p-4 rounded-xl border border-white/5 flex flex-col justify-between h-20">
                             <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Rouge 1</span>
@@ -450,7 +450,7 @@ function App() {
                           </div>
                         </div>
 
-                        {/* Bento Row 2: Polarity */}
+
                         {result.synthesis_neutral && (
                           <div className="grid grid-cols-2 gap-3">
                             <div className="bg-card-bg p-4 rounded-xl border border-white/5 flex flex-col justify-between h-20">
@@ -464,7 +464,7 @@ function App() {
                           </div>
                         )}
 
-                        {/* Bento Row 3: Influence */}
+
                         {result.debate_influence && (
                           <div className="bg-card-bg p-5 rounded-xl border border-white/5">
                             <span className="block text-[10px] font-medium text-gray-500 uppercase tracking-widest mb-4">Debate Influence</span>
