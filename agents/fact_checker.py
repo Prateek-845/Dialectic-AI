@@ -27,6 +27,7 @@ def fact_checker_node(state: GraphState) -> dict:
         total_ents = 0
         highlighted_words = []
         last_idx = 0
+        web_search_count = 0
         
 
         for ent in doc_sum.ents:
@@ -40,13 +41,16 @@ def fact_checker_node(state: GraphState) -> dict:
                 cited += 1
                 highlighted_words.append(f'<span style="background-color: #d4edda; color: #155724; padding: 2px; border-radius: 3px;" title="Verified Entity">{ent.text}</span>')
             else:
-
-                search_res = perform_web_search(ent.text + " " + article[:50])
-                if ent.text.lower() in search_res.lower() and "No external" not in search_res:
-                    cited += 1
-                    highlighted_words.append(f'<span style="background-color: #cce5ff; color: #004085; padding: 2px; border-radius: 3px;" title="Verified via Web">{ent.text}</span>')
+                if web_search_count < 5:
+                    search_res = perform_web_search(ent.text + " " + article[:50])
+                    web_search_count += 1
+                    if ent.text.lower() in search_res.lower() and "No external" not in search_res:
+                        cited += 1
+                        highlighted_words.append(f'<span style="background-color: #cce5ff; color: #004085; padding: 2px; border-radius: 3px;" title="Verified via Web">{ent.text}</span>')
+                    else:
+                        highlighted_words.append(f'<span style="background-color: #f8d7da; color: #721c24; padding: 2px; border-radius: 3px;" title="Unverified/Hallucinated">{ent.text}</span>')
                 else:
-                    highlighted_words.append(f'<span style="background-color: #f8d7da; color: #721c24; padding: 2px; border-radius: 3px;" title="Unverified/Hallucinated">{ent.text}</span>')
+                    highlighted_words.append(f'<span style="background-color: #f8d7da; color: #721c24; padding: 2px; border-radius: 3px;" title="Unverified (Rate Limited)">{ent.text}</span>')
             last_idx = ent.end_char
             
         highlighted_words.append(summary_text[last_idx:])

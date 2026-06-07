@@ -2,7 +2,6 @@ langchain-groq
 langgraph
 spacy
 numpy<2.0.0
-sentence-transformers
 python-dotenv
 duckduckgo-search
 requests

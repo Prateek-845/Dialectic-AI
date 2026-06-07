@@ -1,9 +1,12 @@
 from duckduckgo_search import DDGS
 
+# Instantiate globally to prevent memory explosions from curl_cffi and connection pooling
+ddgs_client = DDGS()
+
 def perform_web_search(query: str) -> str:
     """Performs a web search using DuckDuckGo and returns the results as a string."""
     try:
-        results = DDGS().text(query, max_results=3)
+        results = ddgs_client.text(query, max_results=3)
         if not results:
             return "No external context found."
         
