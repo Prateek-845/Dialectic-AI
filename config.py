@@ -23,24 +23,16 @@ load_dotenv()
 @functools.lru_cache(maxsize=1)
 def load_spacy_model():
     try:
-        return spacy.load("en_core_web_md")
+        return spacy.load("en_core_web_sm")
     except OSError:
         from spacy.cli import download
-        download("en_core_web_md")
-        return spacy.load("en_core_web_md")
+        download("en_core_web_sm")
+        return spacy.load("en_core_web_sm")
 
 @functools.lru_cache(maxsize=1)
 def load_nli_model():
-    if os.getenv("RENDER"):
-        return None
-    try:
-        import warnings
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            from sentence_transformers import CrossEncoder
-            return CrossEncoder("cross-encoder/nli-deberta-v3-small")
-    except Exception:
-        return None
+    # Hardcoded bypass for cloud memory limits
+    return None
 
 def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     """Returns a ChatGroq LLM based on environment alias."""
