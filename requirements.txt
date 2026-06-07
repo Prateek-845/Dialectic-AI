@@ -4,7 +4,7 @@ spacy==3.7.6
 numpy<2.0.0
 sentence-transformers==3.4.1
 python-dotenv==1.0.1
-ddgs
+duckduckgo-search
 requests
 rouge-score
 textblob
