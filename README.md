@@ -1,6 +1,6 @@
 # Dialectic AI
 
-Dialectic AI is a full stack,RAG based multi agent debate platform designed to critically analyze news articles and URLs. By utilizing specialized large language model personas, the system orchestrates a structured, fact-checked debate regarding the claims made in a given text. The platform ultimately generates a synthesized, neutral summary, reducing bias and highlighting verified facts.
+Dialectic AI is a full stack, RAG based multi agent debate platform designed to critically analyze news articles and URLs. By utilizing specialized large language model personas, the system orchestrates a structured, fact-checked debate regarding the claims made in a given text. The platform ultimately generates a downloadable, synthesized, neutral summary, reducing bias and highlighting verified facts and maintains history per user.
 
 **Live Application:** [Dialectic AI on Vercel](https://dialectic-ai-two.vercel.app/)
 
