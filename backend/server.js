@@ -144,7 +144,11 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Error streaming debate:', error.message);
-    res.status(500).json({ error: 'Failed to stream debate' });
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to stream debate' });
+    } else {
+      res.end();
+    }
   }
 });
 
