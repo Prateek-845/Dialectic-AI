@@ -1,9 +1,9 @@
-langchain-groq==0.2.4
-langgraph==0.2.68
-spacy==3.7.6
+langchain-groq
+langgraph
+spacy
 numpy<2.0.0
-sentence-transformers==3.4.1
-python-dotenv==1.0.1
+sentence-transformers
+python-dotenv
 duckduckgo-search
 requests
 rouge-score
