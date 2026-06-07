@@ -32,13 +32,19 @@ def fact_checker_node(state: GraphState) -> dict:
             total_ents += 1
             highlighted_words.append(summary_text[last_idx:ent.start_char])
 
-            if ent.text.lower() in article_ents:
+            import re
+            ent_clean = ent.text.lower().replace("'s", "").replace("’s", "")
+            ent_clean = re.sub(r'^[^\w]+|[^\w]+$', '', ent_clean).strip()
+            
+            is_in_article = ent_clean in article.lower() or any(ent_clean in a or a in ent_clean for a in article_ents)
+
+            if is_in_article:
                 cited += 1
                 highlighted_words.append(make_span(ent.text, "#d4edda", "#155724", "Verified Entity"))
             elif web_search_count < 5:
                 res = perform_web_search(f"{ent.text} {article[:50]}")
                 web_search_count += 1
-                if ent.text.lower() in res.lower() and "No external" not in res:
+                if ent_clean in res.lower() and "No external" not in res:
                     cited += 1
                     highlighted_words.append(make_span(ent.text, "#cce5ff", "#004085", "Verified via Web"))
                 else:
