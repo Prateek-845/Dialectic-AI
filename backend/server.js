@@ -100,7 +100,6 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
     response.data.pipe(res);
 
     response.data.on('data', (chunk) => {
-
       const chunkStr = chunk.toString();
       const lines = chunkStr.split('\n');
       for (const line of lines) {
@@ -109,6 +108,15 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
             finalState = JSON.parse(line.substring(6));
           } catch(e) {}
         }
+      }
+    });
+
+    response.data.on('error', (err) => {
+      console.error('Stream error from Python Engine:', err.message);
+      if (!res.headersSent) {
+        res.status(500).end();
+      } else {
+        res.end();
       }
     });
 
