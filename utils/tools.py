@@ -1,7 +1,7 @@
 from duckduckgo_search import DDGS
 
 # Instantiate globally to prevent memory explosions from curl_cffi and connection pooling
-ddgs_client = DDGS()
+ddgs_client = DDGS(timeout=10)
 
 def perform_web_search(query: str) -> str:
     """Performs a web search using DuckDuckGo and returns the results as a string."""

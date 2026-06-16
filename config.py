@@ -38,7 +38,7 @@ def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     """Returns a ChatGroq LLM based on environment alias."""
     model_env_key = f"GROQ_MODEL_{model_alias}"
     model_name = os.getenv(model_env_key, "llama-3.3-70b-versatile")
-    kwargs = {"model": model_name, "temperature": 0.5}
+    kwargs = {"model": model_name, "temperature": 0.5, "timeout": 20}
     if max_tokens:
         kwargs["max_tokens"] = max_tokens
     return ChatGroq(**kwargs)
