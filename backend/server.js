@@ -76,6 +76,10 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
       method: 'post',
       url: `${PYTHON_API_URL}/analyze/stream`,
       data: { article: article || "", thread_id, action, jury_feedback },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/event-stream'
+      },
       responseType: 'stream',
       timeout: 60000
     });
