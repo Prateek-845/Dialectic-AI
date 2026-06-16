@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
-from graph import build_graph
 from typing import Optional
 import urllib.request
 import re
@@ -12,8 +11,11 @@ import uvicorn
 import os
 import sys
 
-
+# Add the parent directory to Python path so we can import 'graph'
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from graph import build_graph
+
 app = FastAPI(title="Dialectic AI Engine API")
 
 app.add_middleware(
