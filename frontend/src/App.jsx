@@ -113,7 +113,12 @@ function App() {
           handleLogout();
           throw new Error('Session expired. Please log in again.');
         }
-        throw new Error('Failed to start debate stream');
+        try {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Failed to start debate stream');
+        } catch(e) {
+          throw new Error(e.message || 'Failed to start debate stream');
+        }
       }
 
       const reader = response.body.getReader();
