@@ -72,17 +72,17 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
     const { article, thread_id, action, jury_feedback } = req.body;
     if (!article && !thread_id) return res.status(400).json({ error: 'Article or thread_id is required' });
 
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders();
-
     const response = await axios({
       method: 'post',
       url: `${PYTHON_API_URL}/analyze/stream`,
       data: { article: article || "", thread_id, action, jury_feedback },
       responseType: 'stream'
     });
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
 
     let finalState = null;
 
@@ -108,6 +108,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
       if (!res.headersSent) {
         res.status(500).end();
       } else {
+        res.write(`data: ${JSON.stringify({ error: err.message })}\n\n`);
         res.end();
       }
     });
@@ -137,8 +138,9 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error streaming debate:', error.message);
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Failed to stream debate' });
+      res.status(500).json({ error: `AI Engine may be waking up from sleep. Please try again in 60s. (Error: ${error.message})` });
     } else {
+      res.write(`data: ${JSON.stringify({ error: `AI Engine Error: ${error.message}` })}\n\n`);
       res.end();
     }
   }
