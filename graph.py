@@ -1,7 +1,5 @@
-"""
-graph.py
-Compiles the LangGraph StateMachine and manages edges/routing.
-"""
+# graph.py
+# Compiles the LangGraph StateMachine and manages edges/routing.
 import functools
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
@@ -14,7 +12,7 @@ from agents.fallacy_checker import fallacy_checker_node
 from agents.mediator import mediator_node
 
 def router_logic(state: GraphState) -> str:
-    """Decides where to go next based on scores, iteration, or user override."""
+    # Decides where to go next based on scores, iteration, or user override.
     force = state.get("force_route")
     if force in ["rewrite", "mediator"]:
         return force
@@ -29,7 +27,7 @@ def router_logic(state: GraphState) -> str:
 
 @functools.lru_cache(maxsize=1)
 def build_graph():
-    """Builds the LangGraph state machine. Cached so Streamlit doesn't rebuild it."""
+    # Builds the LangGraph state machine. Cached so FastAPI doesn't rebuild it on every API request.
     builder = StateGraph(GraphState)
     
     builder.add_node("analyst", analyst_node)

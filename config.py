@@ -1,7 +1,5 @@
-"""
-config.py
-Handles loading of ML models and environment variables.
-"""
+# config.py
+# Handles loading of ML models and environment variables.
 import os
 import logging
 import warnings
@@ -35,7 +33,7 @@ def load_nli_model():
     return None
 
 def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
-    """Returns a ChatGroq LLM based on environment alias."""
+    # Returns a ChatGroq LLM based on environment alias.
     model_env_key = f"GROQ_MODEL_{model_alias}"
     model_name = os.getenv(model_env_key, "llama-3.3-70b-versatile")
     kwargs = {"model": model_name, "temperature": 0.5, "timeout": 20}

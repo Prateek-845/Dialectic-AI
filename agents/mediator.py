@@ -1,8 +1,6 @@
-"""
-agents/mediator.py
-Agent C: The Mediator.
-Writes the final synthesis.
-"""
+# agents/mediator.py
+# Agent C: The Mediator.
+# Writes the final synthesis.
 from langchain_core.messages import HumanMessage
 import re
 from textblob import TextBlob

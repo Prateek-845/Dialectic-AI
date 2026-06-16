@@ -1,7 +1,5 @@
-"""
-state.py
-Defines the shared state dictionary passed between agents in the LangGraph pipeline.
-"""
+# state.py
+# Defines the shared state dictionary passed between agents in the LangGraph pipeline.
 from typing import TypedDict
 
 class GraphState(TypedDict):

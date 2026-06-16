@@ -21,7 +21,6 @@ function App() {
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-
   const [threadId, setThreadId] = useState(null);
   const [juryFeedback, setJuryFeedback] = useState('');
   const [isPaused, setIsPaused] = useState(false);
@@ -116,7 +115,7 @@ function App() {
         try {
           const errData = await response.json();
           throw new Error(errData.error || 'Failed to start debate stream');
-        } catch(e) {
+        } catch (e) {
           throw new Error(e.message || 'Failed to start debate stream');
         }
       }

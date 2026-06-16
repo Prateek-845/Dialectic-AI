@@ -1,8 +1,6 @@
-"""
-agents/fact_checker.py
-Algorithmic Node (No LLM): The Fact Checker.
-Uses spaCy for Entity overlap, DeBERTa for Contradiction, and generates Highlighted HTML.
-"""
+# agents/fact_checker.py
+# Algorithmic Node (No LLM): The Fact Checker.
+# Uses spaCy for Entity overlap, DeBERTa for Contradiction, and generates Highlighted HTML.
 import numpy as np
 from state import GraphState
 from config import load_spacy_model, load_nli_model

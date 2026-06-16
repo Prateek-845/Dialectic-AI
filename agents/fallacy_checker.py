@@ -1,8 +1,6 @@
-"""
-agents/fallacy_checker.py
-Agent Node: The Fallacy Checker.
-Penalizes Authority Scores if Ad Hominem or Emotional Appeals are detected.
-"""
+# agents/fallacy_checker.py
+# Agent Node: The Fallacy Checker.
+# Penalizes Authority Scores if Ad Hominem or Emotional Appeals are detected.
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
 from state import GraphState

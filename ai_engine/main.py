@@ -1,17 +1,20 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
+from graph import build_graph
+from typing import Optional
+import urllib.request
+import re
+import json
+import asyncio
 import uvicorn
 import os
 import sys
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from graph import build_graph
-
 app = FastAPI(title="Dialectic AI Engine API")
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,10 +23,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-from typing import Optional
-import urllib.request
-import re
 
 class AnalyzeRequest(BaseModel):
     article: str
@@ -37,28 +36,20 @@ def fetch_url_content(url: str) -> str:
         html_bytes = urllib.request.urlopen(req, timeout=10).read()
         html_str = html_bytes.decode('utf-8', errors='ignore')
         
-
         html_str = re.sub(r'<script.*?</script>', '', html_str, flags=re.DOTALL | re.IGNORECASE)
         html_str = re.sub(r'<style.*?</style>', '', html_str, flags=re.DOTALL | re.IGNORECASE)
-        
 
         text = re.sub(r'<[^>]+>', ' ', html_str)
-        
 
         lines = (line.strip() for line in text.splitlines())
         text = '\n'.join(line for line in lines if line)
         text = re.sub(r'\n{3,}', '\n\n', text)
-        
 
         return text[:3000]
+        
     except Exception as e:
-
         return url
 
-from fastapi.responses import StreamingResponse
-import json
-
-import asyncio
 
 @app.post("/analyze/stream")
 async def analyze_article_stream(req: AnalyzeRequest):

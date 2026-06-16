@@ -9,14 +9,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dialectic-super-secret-key';
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://localhost:8000';
 
 app.use(cors());
 app.use(express.json());
-
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/dialectic', {
   useNewUrlParser: true,
@@ -103,7 +101,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
         if (part.startsWith('data: ') && !part.includes('[DONE]')) {
           try {
             finalState = JSON.parse(part.substring(6));
-          } catch(e) {}
+          } catch (e) { }
         }
       }
     });
@@ -135,7 +133,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
             debate_influence: finalState.debate_influence
           });
           await newDebate.save();
-        } catch(e) {
+        } catch (e) {
           console.error("Error saving streamed debate to MongoDB", e);
         }
       }

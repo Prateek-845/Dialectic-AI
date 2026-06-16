@@ -1,8 +1,6 @@
-"""
-agents/supporter.py
-Agent B: The Supporter.
-Defends the article against the Challenger.
-"""
+# agents/supporter.py
+# Agent B: The Supporter.
+# Defends the article against the Challenger.
 from state import GraphState
 from config import get_llm
 from utils.tools import generate_argument

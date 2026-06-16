@@ -1,7 +1,5 @@
-"""
-agents/analyst.py
-Agent 0: The Analyst. Reads the article and dynamically decides what two perspectives should debate it.
-"""
+# agents/analyst.py
+# Agent 0: The Analyst. Reads the article and dynamically decides what two perspectives should debate it.
 import json
 import re
 from langchain_core.messages import HumanMessage

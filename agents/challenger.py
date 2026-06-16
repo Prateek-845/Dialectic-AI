@@ -1,8 +1,6 @@
-"""
-agents/challenger.py
-Agent A: The Challenger.
-Uses Web Search to bring in external facts and challenges the article.
-"""
+# agents/challenger.py
+# Agent A: The Challenger.
+# Uses Web Search to bring in external facts and challenges the article.
 from state import GraphState
 from config import get_llm
 from utils.tools import perform_web_search, generate_argument
