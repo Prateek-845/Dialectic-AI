@@ -6,7 +6,7 @@ from state import GraphState
 from config import load_spacy_model, load_nli_model
 from utils.tools import perform_web_search
 
-def fact_checker_node(state: GraphState) -> dict:
+async def fact_checker_node(state: GraphState) -> dict:
     article, sum_a, sum_b = state["original_article"], state.get("agent_a_summary", ""), state.get("agent_b_summary", "")
     nlp = load_spacy_model()
     nli_model = load_nli_model()
@@ -19,7 +19,7 @@ def fact_checker_node(state: GraphState) -> dict:
     def make_span(t: str, bg: str, fg: str, title: str) -> str:
         return f'<span style="background-color: {bg}; color: {fg}; padding: 2px; border-radius: 3px;" title="{title}">{t}</span>'
 
-    def score_and_highlight(summary_text: str) -> tuple[float, str]:
+    async def score_and_highlight(summary_text: str) -> tuple[float, str]:
         if not summary_text: return 0.0, ""
         doc_sum = nlp(summary_text)
         cited, total_ents, last_idx, web_search_count = 0, 0, 0, 0
@@ -40,7 +40,7 @@ def fact_checker_node(state: GraphState) -> dict:
                 cited += 1
                 highlighted_words.append(make_span(ent.text, "#d4edda", "#155724", "Verified Entity"))
             elif web_search_count < 5:
-                res = perform_web_search(f"{ent.text} {article[:50]}")
+                res = await perform_web_search(f"{ent.text} {article[:50]}")
                 web_search_count += 1
                 if ent_clean in res.lower() and "No external" not in res:
                     cited += 1
@@ -68,8 +68,8 @@ def fact_checker_node(state: GraphState) -> dict:
         final_score = max(0.0, min(1.0, base_score * (1.0 - penalty)))
         return round(float(final_score), 3), "".join(highlighted_words)
 
-    a_score, html_a = score_and_highlight(sum_a)
-    b_score, html_b = score_and_highlight(sum_b)
+    a_score, html_a = await score_and_highlight(sum_a)
+    b_score, html_b = await score_and_highlight(sum_b)
     
     return {
         "a_score": a_score, 

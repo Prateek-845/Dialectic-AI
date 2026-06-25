@@ -9,7 +9,7 @@ async def challenger_node(state: GraphState) -> dict:
     article = state["original_article"]
     llm = get_llm("A", max_tokens=300)
     
-    search_context = perform_web_search(article[:100] + " controversy criticism")
+    search_context = await perform_web_search(article[:100] + " controversy criticism")
     prompt = f"You are playing the role of a {state.get('persona_a', 'Challenger')}.\n\nOriginal Article:\n{article[:2000]}\n\nExternal Context:\n{search_context}\n\n"
     
     if state.get("iteration", 0) > 0:
