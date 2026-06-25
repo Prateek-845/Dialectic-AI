@@ -1,10 +1,11 @@
-from duckduckgo_search import AsyncDDGS
+import asyncio
+from duckduckgo_search import DDGS
 
-async def perform_web_search(query: str) -> str:
-    # Performs a web search asynchronously using DuckDuckGo.
+def _sync_web_search(query: str) -> str:
+    # Performs a web search using the synchronous DDGS client.
     try:
-        async with AsyncDDGS(timeout=10) as ddgs:
-            results = await ddgs.text(query, max_results=3)
+        with DDGS(timeout=10) as ddgs:
+            results = list(ddgs.text(query, max_results=3))
             if not results:
                 return "No external context found."
             
@@ -15,6 +16,10 @@ async def perform_web_search(query: str) -> str:
             return "\n\n".join(context)
     except Exception as e:
         return f"No external context found. Error: {str(e)}"
+
+async def perform_web_search(query: str) -> str:
+    # Offloads the synchronous DuckDuckGo search to a separate worker thread.
+    return await asyncio.to_thread(_sync_web_search, query)
 
 import re
 from langchain_core.messages import HumanMessage
