@@ -6,6 +6,7 @@ from config import get_llm
 from utils.tools import generate_argument
 
 async def supporter_node(state: GraphState) -> dict:
+    print(f"--- [Supporter Node] Starting (iteration={state.get('iteration', 0)}) ---")
     article = state["original_article"]
     llm = get_llm("B", max_tokens=300)
     
@@ -21,4 +22,7 @@ async def supporter_node(state: GraphState) -> dict:
         "and countering the Challenger. Cite specific facts. Plain text. No bullets. Enclose strictly in <ARGUMENT>...</ARGUMENT> tags."
     )
     
-    return {"agent_b_summary": await generate_argument(llm, prompt, "ARGUMENT")}
+    print("--- [Supporter Node] Generating argument from LLM ---")
+    arg_summary = await generate_argument(llm, prompt, "ARGUMENT")
+    print(f"--- [Supporter Node] Completed (arg len={len(arg_summary) if arg_summary else 0}) ---")
+    return {"agent_b_summary": arg_summary}

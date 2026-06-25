@@ -10,6 +10,7 @@ from utils.tools import generate_argument
 from config import get_llm
 
 async def mediator_node(state: GraphState) -> dict:
+    print("--- [Mediator Node] Starting ---")
     a_sum, b_sum = state.get("agent_a_summary", ""), state.get("agent_b_summary", "")
     llm = get_llm("MEDIATOR", max_tokens=400)
     
@@ -21,9 +22,11 @@ async def mediator_node(state: GraphState) -> dict:
         "Enclose strictly within <SYNTHESIS>...</SYNTHESIS> tags."
     )
     
+    print("--- [Mediator Node] Invoking LLM for synthesis ---")
     final_text = await generate_argument(llm, prompt, "SYNTHESIS")
+    print(f"--- [Mediator Node] Synthesis text generated (len={len(final_text)}) ---")
     
-
+    print("--- [Mediator Node] Calculating metrics (ROUGE, sentiment, influence) ---")
     scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
     r_scores = scorer.score(state["original_article"], final_text)
     synthesis_rouge = {
@@ -48,6 +51,7 @@ async def mediator_node(state: GraphState) -> dict:
         "supporter": round((score_b / total_influence) * 100, 1)
     }
 
+    print(f"--- [Mediator Node] Completed metrics synthesis: rouge={synthesis_rouge}, neutral={synthesis_neutral}, influence={influence} ---")
     return {
         "final_summary": final_text,
         "synthesis_rouge": synthesis_rouge,

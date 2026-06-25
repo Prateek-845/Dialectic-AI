@@ -7,6 +7,7 @@ from state import GraphState
 from config import get_llm
 
 async def analyst_node(state: GraphState) -> dict:
+    print("--- [Analyst Node] Starting ---")
     llm = get_llm("MEDIATOR")
     prompt = (
         "You are a News Analyst. Read the following article snippet and identify two "
@@ -18,8 +19,14 @@ async def analyst_node(state: GraphState) -> dict:
     )
     
     try:
+        print("--- [Analyst Node] Invoking LLM ---")
         result = await llm.ainvoke([HumanMessage(content=prompt)])
         data = json.loads(re.search(r"\{.*\}", result.content.strip(), re.DOTALL).group(0))
-        return {"persona_a": data.get("persona_a", "Challenger"), "persona_b": data.get("persona_b", "Supporter")}
-    except Exception:
-        return {"persona_a": "Skeptic", "persona_b": "Defending Authority"}
+        res = {"persona_a": data.get("persona_a", "Challenger"), "persona_b": data.get("persona_b", "Supporter")}
+        print(f"--- [Analyst Node] Completed successfully: {res} ---")
+        return res
+    except Exception as e:
+        print(f"--- [Analyst Node] Exception in invoking LLM: {str(e)}. Falling back to defaults. ---")
+        fallback = {"persona_a": "Skeptic", "persona_b": "Defending Authority"}
+        print(f"--- [Analyst Node] Completed with fallback: {fallback} ---")
+        return fallback
