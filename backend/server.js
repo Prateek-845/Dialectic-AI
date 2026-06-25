@@ -86,6 +86,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
     const { article, thread_id, action, jury_feedback } = req.body;
     if (!article && !thread_id) return res.status(400).json({ error: 'Article or thread_id is required' });
 
+    console.log(`[Express] Initiating stream request. Target URL: ${PYTHON_API_URL}/analyze/stream`);
     const response = await axios({
       method: 'post',
       url: `${PYTHON_API_URL}/analyze/stream`,
@@ -197,4 +198,5 @@ app.get('/api/debates/:id', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Express Server running on port ${PORT}`);
+  console.log(`Using PYTHON_API_URL: "${PYTHON_API_URL}"`);
 });
