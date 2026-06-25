@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
@@ -54,7 +54,7 @@ def fetch_url_content(url: str) -> str:
 
 
 @app.post("/analyze/stream")
-async def analyze_article_stream(req: AnalyzeRequest, request: Request):
+async def analyze_article_stream(req: AnalyzeRequest):
     if not req.article: raise HTTPException(status_code=400, detail="Article text is required.")
         
     async def generate():
@@ -72,24 +72,16 @@ async def analyze_article_stream(req: AnalyzeRequest, request: Request):
                 if update_payload:
                     graph.update_state(config, update_payload)
                 async for event in graph.astream(None, config=config, stream_mode="values"):
-                    if await request.is_disconnected():
-                        print("Client disconnected (astream update), aborting stream.")
-                        break
                     yield f"data: {json.dumps(event)}\n\n"
             else:
                 async for event in graph.astream({"original_article": actual_article}, config=config, stream_mode="values"):
-                    if await request.is_disconnected():
-                        print("Client disconnected (astream initial), aborting stream.")
-                        break
                     yield f"data: {json.dumps(event)}\n\n"
                     
-            if not await request.is_disconnected():
-                yield "data: [DONE]\n\n"
+            yield "data: [DONE]\n\n"
         except asyncio.CancelledError:
             print("Stream cancelled by asyncio.")
         except Exception as e:
-            if not await request.is_disconnected():
-                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
             
     return StreamingResponse(generate(), media_type="text/event-stream")
 
