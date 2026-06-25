@@ -25,6 +25,7 @@ function App() {
   const [juryFeedback, setJuryFeedback] = useState('');
   const [isPaused, setIsPaused] = useState(false);
   const resultsContainerRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
 
   const handleAuth = async (e) => {
@@ -46,6 +47,9 @@ function App() {
   };
 
   const handleLogout = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
@@ -75,6 +79,14 @@ function App() {
     }
   }, [showHistory]);
 
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
   const handleAnalyze = async (resumeAction = null) => {
     if (!article && !resumeAction) return;
 
@@ -90,6 +102,11 @@ function App() {
     setIsPaused(false);
     setError(null);
 
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+
     try {
       const payload = {
         article,
@@ -104,7 +121,8 @@ function App() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: abortControllerRef.current.signal
       });
 
       if (!response.ok) {
@@ -162,6 +180,10 @@ function App() {
         }
       }
     } catch (err) {
+      if (err.name === 'AbortError') {
+        console.log('Stream request aborted.');
+        return;
+      }
       setError(err.message || 'Failed to process debate');
       setLoading(false);
     }
@@ -310,7 +332,17 @@ function App() {
 
               <div className="flex justify-between items-center mb-8 no-print">
                 <div className="flex items-center gap-3">
-                  <button onClick={() => { setResult(null); setLoading(false); setArticle(''); setIsPaused(false); setThreadId(null); setJuryFeedback(''); }} className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+                  <button onClick={() => {
+                    if (abortControllerRef.current) {
+                      abortControllerRef.current.abort();
+                    }
+                    setResult(null);
+                    setLoading(false);
+                    setArticle('');
+                    setIsPaused(false);
+                    setThreadId(null);
+                    setJuryFeedback('');
+                  }} className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                     New Analysis
                   </button>

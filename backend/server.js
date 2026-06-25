@@ -66,6 +66,21 @@ app.post('/api/auth/login', async (req, res) => {
 
 
 app.post('/api/debates/stream', authenticateToken, async (req, res) => {
+  const abortController = new AbortController();
+  let responseStream = null;
+
+  req.on('close', () => {
+    console.log('Client disconnected from Express, aborting Python engine stream request.');
+    abortController.abort();
+    if (responseStream) {
+      try {
+        responseStream.destroy();
+      } catch (err) {
+        console.error('Error destroying response stream:', err.message);
+      }
+    }
+  });
+
   try {
     const { article, thread_id, action, jury_feedback } = req.body;
     if (!article && !thread_id) return res.status(400).json({ error: 'Article or thread_id is required' });
@@ -79,8 +94,11 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
         'Accept': 'text/event-stream'
       },
       responseType: 'stream',
-      timeout: 60000
+      timeout: 60000,
+      signal: abortController.signal
     });
+
+    responseStream = response.data;
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
@@ -90,10 +108,10 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
     let finalState = null;
 
 
-    response.data.pipe(res);
+    responseStream.pipe(res);
 
     let buffer = '';
-    response.data.on('data', (chunk) => {
+    responseStream.on('data', (chunk) => {
       buffer += chunk.toString();
       const parts = buffer.split('\n\n');
       buffer = parts.pop();
@@ -106,7 +124,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
       }
     });
 
-    response.data.on('error', (err) => {
+    responseStream.on('error', (err) => {
       console.error('Stream error from Python Engine:', err.message);
       if (!res.headersSent) {
         res.status(500).end();
@@ -116,7 +134,7 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
       }
     });
 
-    response.data.on('end', async () => {
+    responseStream.on('end', async () => {
       res.end();
 
       if (finalState && finalState.final_summary) {
@@ -139,6 +157,10 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
       }
     });
   } catch (error) {
+    if (axios.isCancel(error)) {
+      console.log('Axios request was canceled due to client disconnect.');
+      return;
+    }
     console.error('Error streaming debate:', error.message);
     if (!res.headersSent) {
       res.status(500).json({ error: `AI Engine may be waking up from sleep. Please try again in 60s. (Error: ${error.message})` });
