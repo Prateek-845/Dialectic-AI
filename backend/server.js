@@ -70,14 +70,16 @@ app.post('/api/debates/stream', authenticateToken, async (req, res) => {
   const abortController = new AbortController();
   let responseStream = null;
 
-  req.on('close', () => {
-    console.log('Client disconnected from Express, aborting Python engine stream request.');
-    abortController.abort();
-    if (responseStream) {
-      try {
-        responseStream.destroy();
-      } catch (err) {
-        console.error('Error destroying response stream:', err.message);
+  res.on('close', () => {
+    if (!res.writableEnded) {
+      console.log('Client disconnected from Express, aborting Python engine stream request.');
+      abortController.abort();
+      if (responseStream) {
+        try {
+          responseStream.destroy();
+        } catch (err) {
+          console.error('Error destroying response stream:', err.message);
+        }
       }
     }
   });
