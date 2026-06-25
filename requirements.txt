@@ -3,7 +3,7 @@ langgraph
 spacy
 numpy<2.0.0
 python-dotenv
-duckduckgo-search
+duckduckgo-search>=6.0.0
 requests
 rouge-score
 textblob
