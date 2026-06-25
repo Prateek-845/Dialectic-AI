@@ -55,55 +55,39 @@ def fetch_url_content(url: str) -> str:
 
 @app.post("/analyze/stream")
 async def analyze_article_stream(req: AnalyzeRequest):
-    print(f"--- [FastAPI] Received analyze request: thread_id={req.thread_id}, action={req.action}, article_len={len(req.article) if req.article else 0} ---")
-    
     try:
         graph = build_graph()
         config = {"configurable": {"thread_id": req.thread_id}}
         current_state = graph.get_state(config)
     except Exception as e:
-        print(f"--- [FastAPI] Error initializing graph or state: {str(e)} ---")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Graph initialization failed: {str(e)}")
 
     if not current_state.next and not req.article:
-        print("--- [FastAPI] Validation failed: Article text is required to start a new analysis ---")
         raise HTTPException(status_code=400, detail="Article text is required to start a new analysis.")
         
     async def generate():
         import traceback
-        print("--- [FastAPI] Starting stream generator ---")
         try:
             actual_article = req.article
             if actual_article and actual_article.startswith(("http://", "https://")):
-                print(f"--- [FastAPI] Fetching URL content: {actual_article} ---")
                 actual_article = await asyncio.to_thread(fetch_url_content, actual_article)
-                print(f"--- [FastAPI] Fetched URL content (len={len(actual_article)}) ---")
                 
-            print(f"--- [FastAPI] Next nodes in checkpoint state: {current_state.next} ---")
-            
             if current_state.next:
                 update_payload = {k: v for k, v in [("force_route", req.action), ("jury_feedback", req.jury_feedback)] if v}
                 if update_payload:
-                    print(f"--- [FastAPI] Updating state with payload: {update_payload} ---")
                     graph.update_state(config, update_payload)
-                print("--- [FastAPI] Resuming graph streaming from checkpoint ---")
                 async for event in graph.astream(None, config=config, stream_mode="values"):
-                    print(f"--- [FastAPI] Yielding resumed state event (keys: {list(event.keys()) if event else []}) ---")
                     yield f"data: {json.dumps(event)}\n\n"
             else:
-                print("--- [FastAPI] Starting new graph streaming ---")
                 async for event in graph.astream({"original_article": actual_article}, config=config, stream_mode="values"):
-                    print(f"--- [FastAPI] Yielding new state event (keys: {list(event.keys()) if event else []}) ---")
                     yield f"data: {json.dumps(event)}\n\n"
                     
-            print("--- [FastAPI] Streaming completed successfully. Yielding DONE ---")
             yield "data: [DONE]\n\n"
         except asyncio.CancelledError:
-            print("--- [FastAPI] Stream request was cancelled by client/asyncio ---")
+            pass
         except Exception as e:
-            print(f"--- [FastAPI] Stream error: {str(e)} ---")
             traceback.print_exc()
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
             

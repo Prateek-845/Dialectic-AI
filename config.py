@@ -20,25 +20,16 @@ load_dotenv()
 
 @functools.lru_cache(maxsize=1)
 def load_spacy_model():
-    print("--- [Config] Loading spaCy model 'en_core_web_sm' ---")
     try:
         import en_core_web_sm
-        model = en_core_web_sm.load()
-        print("--- [Config] Loaded spaCy model via direct package import ---")
-        return model
+        return en_core_web_sm.load()
     except ImportError:
-        print("--- [Config] Direct import of en_core_web_sm failed. Trying spacy.load ---")
         try:
-            model = spacy.load("en_core_web_sm")
-            print("--- [Config] Loaded spaCy model via spacy.load ---")
-            return model
-        except OSError as e:
-            print(f"--- [Config] spacy.load failed: {str(e)}. Attempting CLI download fallback ---")
+            return spacy.load("en_core_web_sm")
+        except OSError:
             from spacy.cli import download
             download("en_core_web_sm")
-            model = spacy.load("en_core_web_sm")
-            print("--- [Config] Loaded spaCy model after fallback CLI download ---")
-            return model
+            return spacy.load("en_core_web_sm")
 
 @functools.lru_cache(maxsize=1)
 def load_nli_model():
