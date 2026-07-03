@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'dialectic-super-secret-key';
 const app = express();
 const PORT = process.env.PORT || 5000;
-const rawPythonUrl = process.env.PYTHON_API_URL || 'http://localhost:8000';
+const rawPythonUrl = process.env.PYTHON_API_URL || 'http://127.0.0.1:8000';
 const PYTHON_API_URL = rawPythonUrl.replace(/\/+$/, '');
 
 app.use(cors());
