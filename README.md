@@ -96,11 +96,8 @@ The application is designed for a distributed cloud architecture, with services 
 1. **Database Layer (MongoDB Atlas)**
    The primary data store is hosted on MongoDB Atlas. It is configured to accept connections from the cloud environments and stores all user credentials, debate histories, and synthesized metrics securely.
 
-2. **AI Engine (Render)**
-   The FastAPI Python engine is deployed as a Web Service on Render, operating in a Python 3.11 environment. This ensures compatibility with modern AI packages such as LangGraph and asynchronous HTTP clients. It receives requests from the Node backend, executes the multi-agent graph, and streams the output back over HTTP.
+2. **Combined Backend & AI Engine (Render)**
+   The Node.js Express server and Python FastAPI engine are containerized using Docker and deployed as a single Render Web Service. They run concurrently inside the container and communicate locally over `127.0.0.1:8000`, optimizing resource usage and remaining within Render's free tier limits.
 
-3. **Node Backend (Render)**
-   The Express.js server is hosted on Render as a distinct Node.js environment. It functions as a secure middleware layer, connecting directly to the MongoDB cluster via a secure URI and proxying the Server-Sent Events (SSE) from the AI engine to the client.
-
-4. **React Frontend (Vercel)**
+3. **React Frontend (Vercel)**
    The client-side Vite React application is deployed on Vercel's Edge Network for maximum global performance and rapid content delivery. It connects to the Node backend via standard REST endpoints and maintains the live SSE connection for the real-time debate user interface.
