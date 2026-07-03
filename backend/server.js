@@ -198,6 +198,15 @@ app.get('/api/debates/:id', async (req, res) => {
   }
 });
 
+app.get('/health', async (req, res) => {
+  try {
+    await axios.get(`${PYTHON_API_URL}/health`, { timeout: 2000 });
+    res.status(200).json({ status: 'healthy', python: 'connected' });
+  } catch (error) {
+    res.status(500).json({ status: 'unhealthy', python: 'disconnected', error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Express Server running on port ${PORT}`);
   console.log(`Using PYTHON_API_URL: "${PYTHON_API_URL}"`);

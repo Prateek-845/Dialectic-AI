@@ -1,0 +1,13 @@
+.git
+.gitignore
+README.md
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+ai_engine/.venv
+frontend/
+.env
+*.env
+*.log

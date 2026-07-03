@@ -53,6 +53,11 @@ def fetch_url_content(url: str) -> str:
         return url
 
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
+
 @app.post("/analyze/stream")
 async def analyze_article_stream(req: AnalyzeRequest):
     try:
