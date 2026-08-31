@@ -362,6 +362,8 @@ function App() {
                 </div>
               </div>
 
+              {error && <p className="text-rose-400 text-sm mb-6 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg animate-fade-in">{error}</p>}
+
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
 
 

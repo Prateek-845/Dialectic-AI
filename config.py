@@ -41,12 +41,12 @@ def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     model_env_key = f"GROQ_MODEL_{model_alias}"
     
     default_models = {
-        "A": "llama-3.1-8b-instant",
+        "A": "llama3-8b-8192",
         "B": "mixtral-8x7b-32768",
         "MEDIATOR": "gemma2-9b-it"
     }
     
-    model_name = os.getenv(model_env_key, default_models.get(model_alias, "llama-3.1-8b-instant"))
+    model_name = os.getenv(model_env_key, default_models.get(model_alias, "llama3-8b-8192"))
     kwargs = {"model": model_name, "temperature": 0.5, "timeout": 20}
     if max_tokens:
         kwargs["max_tokens"] = max_tokens
