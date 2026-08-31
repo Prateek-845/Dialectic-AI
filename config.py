@@ -41,12 +41,12 @@ def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     model_env_key = f"GROQ_MODEL_{model_alias}"
     
     default_models = {
-        "A": "openai/gpt-oss-20b",
+        "A": "minimaxai/minimax-m2.7",
         "B": "qwen/qwen3.6-27b",
         "MEDIATOR": "qwen/qwen3.8-27b"
     }
     
-    model_name = os.getenv(model_env_key, default_models.get(model_alias, "openai/gpt-oss-20b"))
+    model_name = os.getenv(model_env_key, default_models.get(model_alias, "minimaxai/minimax-m2.7"))
     kwargs = {"model": model_name, "temperature": 0.5, "timeout": 20}
     if max_tokens:
         kwargs["max_tokens"] = max_tokens
