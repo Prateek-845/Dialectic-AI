@@ -21,15 +21,18 @@ async def perform_web_search(query: str) -> str:
     # Offloads the synchronous DuckDuckGo search to a separate worker thread.
     return await asyncio.to_thread(_sync_web_search, query)
 
+
 import re
 from langchain_core.messages import HumanMessage
 
 def extract_tag(content: str, tag: str) -> str:
     # Extracts text within XML-like tags, falling back to stripping <think>.
-    match = re.search(f'<{tag}>(.*?)</{tag}>', content, re.DOTALL)
+    match = re.search(f'<{tag}>(.*?)</{tag}>', content, re.DOTALL | re.IGNORECASE)
     if match:
         return match.group(1).strip()
-    return re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+        
+    stripped = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL | re.IGNORECASE).strip()
+    return stripped if stripped else content.strip()
 
 async def generate_argument(llm, prompt: str, tag: str) -> str:
     # Helper to asynchronously run the LLM and extract the specified tag.
