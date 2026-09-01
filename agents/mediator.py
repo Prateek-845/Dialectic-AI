@@ -11,14 +11,15 @@ from config import get_llm
 
 async def mediator_node(state: GraphState) -> dict:
     a_sum, b_sum = state.get("agent_a_summary", ""), state.get("agent_b_summary", "")
-    llm = get_llm("MEDIATOR", max_tokens=400)
+    llm = get_llm("MEDIATOR", max_tokens=2000)
     
     prompt = (
         "You are the Mediator. Write a 200-word final, neutral synthesis of the debate.\n\n"
         f"Persona A ({state.get('persona_a', 'A')}) Score: {state.get('a_score', 0.0)}\nArgument:\n{a_sum}\n\n"
         f"Persona B ({state.get('persona_b', 'B')}) Score: {state.get('b_score', 0.0)}\nArgument:\n{b_sum}\n\n"
         "Write a final, completely neutral synthesis (approx 200 words) summarizing the core truth. "
-        "Enclose strictly within <SYNTHESIS>...</SYNTHESIS> tags."
+        "If you need to think step-by-step, you MUST enclose your entire thinking process inside <think>...</think> tags. "
+        "After thinking, enclose your final synthesis strictly within <SYNTHESIS> tags, for example: <SYNTHESIS> your text here </SYNTHESIS>."
     )
     
     final_text = await generate_argument(llm, prompt, "SYNTHESIS")
