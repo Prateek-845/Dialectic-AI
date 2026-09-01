@@ -41,8 +41,8 @@ def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     model_env_key = f"GROQ_MODEL_{model_alias}"
     
     default_models = {
-        "A": "openai/gpt-oss-safeguard-20b",
-        "B": "openai/gpt-oss-120b",
+        "A": "qwen/qwen3.8-27b",
+        "B": "qwen/qwen3.6-27b",
         "MEDIATOR": "groq/compound"
     }
     
