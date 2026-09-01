@@ -18,7 +18,7 @@ async def supporter_node(state: GraphState) -> dict:
 
     prompt += (
         "Write a highly concise defensive argument (max 150 words) supporting the article's core claims "
-        "and countering the Challenger. Cite specific facts. Plain text. No bullets. Enclose strictly in <ARGUMENT>...</ARGUMENT> tags."
+        "and countering the Challenger. Cite specific facts. Plain text. No bullets. Enclose your argument strictly in <ARGUMENT> tags, for example: <ARGUMENT> your text here </ARGUMENT>."
     )
     
     arg_summary = await generate_argument(llm, prompt, "ARGUMENT")
