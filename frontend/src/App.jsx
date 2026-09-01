@@ -284,17 +284,6 @@ function App() {
               Dialectic AI
             </h1>
             <div className="flex items-center gap-4 text-sm">
-              <button onClick={async () => {
-                try {
-                  const res = await fetch(`${API_URL}/api/models`);
-                  const data = await res.json();
-                  alert(JSON.stringify(data.data ? data.data.map(m => m.id) : data, null, 2));
-                } catch(e) {
-                  alert("Error fetching models: " + e.message);
-                }
-              }} className="text-accent-blue hover:text-white transition-colors bg-blue-500/10 px-3 py-1 rounded border border-blue-500/20">
-                Check My Models
-              </button>
               <span className="text-gray-400">Hi, <span className="text-gray-200">{user}</span></span>
               <button onClick={() => setShowHistory(!showHistory)} className="text-gray-400 hover:text-white transition-colors">History</button>
               <button onClick={handleLogout} className="text-gray-400 hover:text-rose-400 transition-colors">Sign Out</button>

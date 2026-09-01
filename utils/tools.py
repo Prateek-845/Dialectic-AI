@@ -26,12 +26,10 @@ from langchain_core.messages import HumanMessage
 
 def extract_tag(content: str, tag: str) -> str:
     # Extracts text within XML-like tags, falling back to stripping <think>.
-    match = re.search(f'<{tag}>(.*?)</{tag}>', content, re.DOTALL | re.IGNORECASE)
+    match = re.search(f'<{tag}>(.*?)</{tag}>', content, re.DOTALL)
     if match:
         return match.group(1).strip()
-        
-    stripped = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL | re.IGNORECASE).strip()
-    return stripped if stripped else content.strip()
+    return re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
 
 async def generate_argument(llm, prompt: str, tag: str) -> str:
     # Helper to asynchronously run the LLM and extract the specified tag.
