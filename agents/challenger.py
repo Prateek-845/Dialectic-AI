@@ -28,7 +28,9 @@ async def challenger_node(state: GraphState) -> dict:
         
     prompt += (
         "Write a highly concise critical argument (max 150 words) challenging the main claims. "
-        "Cite specific facts. Plain text. No bullets. Enclose your argument strictly in <ARGUMENT> tags, for example: <ARGUMENT> your text here </ARGUMENT>."
+        "Cite specific facts. Plain text. No bullets. "
+        "If you need to think step-by-step, you MUST enclose your entire thinking process inside <think>...</think> tags. "
+        "After thinking, enclose your final argument strictly in <ARGUMENT> tags, for example: <ARGUMENT> your text here </ARGUMENT>."
     )
     
     arg_summary = await generate_argument(llm, prompt, "ARGUMENT")
