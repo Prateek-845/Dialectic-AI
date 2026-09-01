@@ -42,8 +42,8 @@ def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     
     default_models = {
         "A": "qwen/qwen3.8-27b",
-        "B": "allam-2-7b",
-        "MEDIATOR": "qwen/qwen3.6-27b"
+        "B": "qwen/qwen3.8-27b",
+        "MEDIATOR": "qwen/qwen3.8-27b"
     }
     
     model_name = os.getenv(model_env_key, default_models.get(model_alias, "qwen/qwen3.8-27b"))
