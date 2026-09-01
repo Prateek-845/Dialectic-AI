@@ -42,11 +42,11 @@ def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     
     default_models = {
         "A": "qwen/qwen3.8-27b",
-        "B": "groq/compound",
-        "MEDIATOR": "groq/compound-mini"
+        "B": "canopylabs/orpheus-v1-english",
+        "MEDIATOR": "allam-2-7b"
     }
     
-    model_name = os.getenv(model_env_key, default_models.get(model_alias, "groq/compound"))
+    model_name = os.getenv(model_env_key, default_models.get(model_alias, "qwen/qwen3.8-27b"))
     kwargs = {"model": model_name, "temperature": 0.5, "timeout": 20}
     if max_tokens:
         kwargs["max_tokens"] = max_tokens
