@@ -57,6 +57,23 @@ def fetch_url_content(url: str) -> str:
 async def health_check():
     return {"status": "healthy"}
 
+@app.get("/models")
+async def get_models():
+    import requests
+    import os
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return {"error": "GROQ_API_KEY environment variable not found on this server."}
+    url = "https://api.groq.com/openai/v1/models"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        return response.json()
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.post("/analyze/stream")
 async def analyze_article_stream(req: AnalyzeRequest):

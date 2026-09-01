@@ -207,6 +207,15 @@ app.get('/health', async (req, res) => {
   }
 });
 
+app.get('/api/models', async (req, res) => {
+  try {
+    const response = await axios.get(`${PYTHON_API_URL}/models`, { timeout: 10000 });
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Express Server running on port ${PORT}`);
   console.log(`Using PYTHON_API_URL: "${PYTHON_API_URL}"`);
