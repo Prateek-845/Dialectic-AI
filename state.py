@@ -17,7 +17,7 @@ class GraphState(TypedDict):
     final_summary: str         # The final neutral synthesis by the Mediator
     debate_log: list           # History of all rounds
     synthesis_rouge: dict      # ROUGE metrics for Final Synthesis
-    synthesis_neutral: dict    # Neutrality metrics (sentiment)
+    synthesis_neutral: dict    # Polarity of agents vs synthesis + synthesis_neutrality score
     debate_influence: dict     # Influence % of each agent on the final synthesis
     critique_a: str            # Chain-of-Thought Critique from Fallacy Checker for A
     critique_b: str            # Chain-of-Thought Critique from Fallacy Checker for B

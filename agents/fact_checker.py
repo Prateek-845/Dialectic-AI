@@ -70,7 +70,9 @@ async def fact_checker_node(state: GraphState) -> dict:
                     f"Article (excerpt): {article[:500]}\n\nSentence: {sent}"
                 )
                 result = await nli_llm.ainvoke(nli_prompt)
-                if "YES" in result.content.upper():
+                # Strip <think> blocks — qwen always thinks before answering
+                clean_answer = re.sub(r'<think>.*?</think>', '', result.content, flags=re.DOTALL | re.IGNORECASE).strip()
+                if "YES" in clean_answer.upper():
                     penalty = 0.5
                     break
             except Exception:
