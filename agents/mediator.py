@@ -11,7 +11,7 @@ from config import get_llm
 
 async def mediator_node(state: GraphState) -> dict:
     a_sum, b_sum = state.get("agent_a_summary", ""), state.get("agent_b_summary", "")
-    llm = get_llm("MEDIATOR", max_tokens=2000)
+    llm = get_llm("MEDIATOR", max_tokens=800)
     
     prompt = (
         "You are the Mediator. Write a 200-word final, neutral synthesis of the debate.\n\n"
