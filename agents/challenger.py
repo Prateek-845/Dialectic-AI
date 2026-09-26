@@ -8,7 +8,7 @@ from utils.tools import perform_web_search, generate_argument
 
 async def challenger_node(state: GraphState) -> dict:
     article = state["original_article"]
-    llm = get_llm("A", max_tokens=800)
+    llm = get_llm("A", max_tokens=600)
     
     try:
         search_context = await asyncio.wait_for(

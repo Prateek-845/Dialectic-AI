@@ -5,7 +5,7 @@ import re
 import asyncio
 from state import GraphState
 from config import load_spacy_model, get_nli_llm
-from utils.tools import perform_web_search
+from utils.tools import perform_web_search, safe_ainvoke
 
 async def fact_checker_node(state: GraphState) -> dict:
     article, sum_a, sum_b = state["original_article"], state.get("agent_a_summary", ""), state.get("agent_b_summary", "")
@@ -60,16 +60,17 @@ async def fact_checker_node(state: GraphState) -> dict:
         highlighted_words.append(summary_text[last_idx:])
         base_score = (cited / total_ents) if total_ents > 0 else 0.5
         
-        # NLI contradiction check via Groq LLM (zero extra memory, YES/NO answer)
+        # NLI contradiction check via Groq LLM (zero extra memory, YES/NO answer).
+        # Capped at 2 sentences to stay within the 1000 OTPM free-tier limit.
         penalty = 0.0
-        sentences = [sent.text.strip() for sent in doc_sum.sents if len(sent.text.strip()) > 20]
+        sentences = [s.text.strip() for s in doc_sum.sents if len(s.text.strip()) > 20][:2]
         for sent in sentences:
             try:
                 nli_prompt = (
                     f"Does this sentence CONTRADICT the article? Answer only YES or NO.\n\n"
                     f"Article (excerpt): {article[:500]}\n\nSentence: {sent}"
                 )
-                result = await nli_llm.ainvoke(nli_prompt)
+                result = await safe_ainvoke(nli_llm, nli_prompt)
                 # Strip <think> blocks — qwen always thinks before answering
                 clean_answer = re.sub(r'<think>.*?</think>', '', result.content, flags=re.DOTALL | re.IGNORECASE).strip()
                 if "YES" in clean_answer.upper():
