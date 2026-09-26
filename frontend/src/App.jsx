@@ -493,14 +493,28 @@ function App() {
 
 
                         {result.synthesis_neutral && (
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-3">
                             <div className="bg-card-bg p-4 rounded-xl border border-white/5 flex flex-col justify-between h-20">
-                              <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Original Bias</span>
-                              <span className="text-lg font-semibold text-gray-200">{result.synthesis_neutral.original_polarity?.toFixed(3)}</span>
+                              <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Synthesis Neutrality</span>
+                              <span className="text-lg font-semibold text-emerald-400">
+                                {result.synthesis_neutral.synthesis_neutrality != null
+                                  ? `${(result.synthesis_neutral.synthesis_neutrality * 100).toFixed(1)}%`
+                                  : '—'}
+                              </span>
                             </div>
-                            <div className="bg-card-bg p-4 rounded-xl border border-white/5 flex flex-col justify-between h-20">
-                              <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Synthesis Bias</span>
-                              <span className="text-lg font-semibold text-gray-200">{result.synthesis_neutral.synthesis_polarity?.toFixed(3)}</span>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-card-bg p-4 rounded-xl border border-white/5 flex flex-col justify-between h-20">
+                                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Challenger Bias</span>
+                                <span className="text-lg font-semibold text-rose-400">
+                                  {result.synthesis_neutral.challenger_polarity?.toFixed(3) ?? '—'}
+                                </span>
+                              </div>
+                              <div className="bg-card-bg p-4 rounded-xl border border-white/5 flex flex-col justify-between h-20">
+                                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest">Supporter Bias</span>
+                                <span className="text-lg font-semibold text-blue-400">
+                                  {result.synthesis_neutral.supporter_polarity?.toFixed(3) ?? '—'}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         )}
