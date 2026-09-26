@@ -9,7 +9,7 @@ Dialectic AI is a full stack, RAG based multi agent debate platform designed to 
 The system is separated into three distinct microservices to ensure scalability and separation of concerns:
 
 1. **Frontend (React, Vite, Tailwind CSS)**
-   The client application handles real-time Server-Sent Events (SSE) streaming, providing a live view of the AI debate. It manages user authentication workflows and features interactive metric displays for ROUGE scores and Polarity Bias analysis.
+   The client application handles real-time Server-Sent Events (SSE) streaming, providing a live view of the AI debate. It manages user authentication workflows and features interactive metric displays for ROUGE scores, a Synthesis Neutrality percentage, and per-agent polarity bias scores.
 
 2. **Backend (Node.js, Express, MongoDB)**
    The Node.js server acts as the central middleware. It manages JWT-based user authentication, securely proxies the SSE stream from the Python AI engine to the frontend, and persists debate histories and metrics in a MongoDB Atlas database.
@@ -23,9 +23,9 @@ The system is separated into three distinct microservices to ensure scalability 
 * **Real-Time Streaming:** The user interface updates dynamically in real-time as the agents formulate their arguments and counter-arguments.
 * **Automated Fact Checking:** The engine automatically performs background web searches using DuckDuckGo to incorporate external context and verify claims made during the debate.
 * **Entity Verification:** Named entities extracted from the text are color-coded based on factual verification. Entities are marked as verified within the text, verified via external web search, or flagged as unverified hallucinations.
-* **Fallacy Checking:** The system analyzes generated arguments for logical contradictions and severe fallacies. If scores fall below a threshold, the graph routes back to the agents for a rewrite. Critical errors pause the execution for human intervention.
-* **Human-in-the-Loop:** The debate execution can be paused, allowing human operators to provide guidance or corrections when logical errors or hallucinations are detected.
-* **Advanced Metrics:** The platform calculates ROUGE scores to measure information conservation between the original article and the synthesis. It also calculates TextBlob Polarity to measure bias reduction, and quantifies debate influence to determine which agent had the most impact on the final summary.
+* **Fallacy Checking:** The system analyzes generated arguments for severe logical fallacies and applies an automated score penalty. If either agent's score falls below the threshold after penalization, the graph routes back to them for a rewrite.
+* **Human-in-the-Loop:** The graph pauses after the fallacy checker via LangGraph's interrupt mechanism, allowing operators to supply a `force_route` action (`rewrite` or `mediator`) or optional jury feedback before execution resumes.
+* **Advanced Metrics:** The platform calculates ROUGE scores to measure information conservation between the original article and the synthesis. It also displays a Synthesis Neutrality percentage (100% = perfectly neutral), per-agent polarity bias scores (Challenger Bias, Supporter Bias), and debate influence percentages to determine which agent had the most impact on the final summary.
 
 ## Agent Workflow
 
@@ -34,8 +34,8 @@ The system is separated into three distinct microservices to ensure scalability 
 1. **Analyst:** Scrapes the provided URL or text and dynamically defines the professional personas best suited for the debate.
 2. **Challenger (Agent A):** Reads the article, executes a web search for opposing context, and attacks the primary claims.
 3. **Supporter (Agent B):** Defends the article against the specific points and citations raised by the Challenger.
-4. **Fact Checker:** Utilizes spaCy to extract Named Entities, verifying them against the original source text and external web context, adjusting scores accordingly.
-5. **Fallacy Checker:** Evaluates the arguments for logical consistency. If an argument is flawed, the node routes back to the Challenger or Supporter for a rewrite. If the error is critical, it halts for human intervention.
+4. **Fact Checker:** Utilizes spaCy to extract Named Entities, verifying them against the original source text and via external web search. A lightweight Groq LLM (qwen) then acts as a zero-memory NLI judge, checking each sentence for contradictions against the article and applying a score penalty when found.
+5. **Fallacy Checker:** Evaluates the arguments for severe logical fallacies using structured output. Detected fallacies incur an automated score penalty (−0.2). The graph then pauses via LangGraph's interrupt mechanism — an operator can supply a `force_route` action or jury feedback — and routes back to the Challenger/Supporter for a rewrite if scores remain below the threshold.
 6. **Mediator:** Synthesizes the verified arguments from both sides into a neutral, balanced summary and calculates the final quantitative metrics.
 
 ## Local Installation
