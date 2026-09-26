@@ -4,7 +4,6 @@ spacy
 numpy<2.0.0
 python-dotenv
 duckduckgo-search>=6.0.0
-requests
 rouge-score
 textblob
 pydantic

@@ -1,7 +1,6 @@
 # agents/mediator.py
 # Agent C: The Mediator.
 # Writes the final synthesis.
-from langchain_core.messages import HumanMessage
 import re
 from textblob import TextBlob
 from rouge_score import rouge_scorer
@@ -31,7 +30,6 @@ async def mediator_node(state: GraphState) -> dict:
         "rougeL": round(r_scores['rougeL'].fmeasure, 3)
     }
     
-
     article_blob = TextBlob(state["original_article"])
     syn_blob = TextBlob(final_text)
     synthesis_neutral = {

@@ -10,11 +10,8 @@ from dotenv import load_dotenv
 
 
 logging.getLogger("sentence_transformers").setLevel(logging.ERROR)
-logging.getLogger("transformers").setLevel(logging.ERROR)
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning, message=r".*duckduckgo_search.*")
-warnings.filterwarnings("ignore", category=DeprecationWarning, message=r".*torch\.jit\.script.*")
-warnings.filterwarnings("ignore", message=r".*HF_TOKEN.*")
 
 load_dotenv()
 
@@ -32,9 +29,11 @@ def load_spacy_model():
             return spacy.load("en_core_web_sm")
 
 @functools.lru_cache(maxsize=1)
-def load_nli_model():
-    # Hardcoded bypass for cloud memory limits
-    return None
+def get_nli_llm():
+    # Lightweight Groq LLM used as a zero-memory NLI judge.
+    # max_tokens=5 is enough — we only need YES or NO.
+    model_name = os.getenv("GROQ_MODEL_A", "qwen/qwen3.8-27b")
+    return ChatGroq(model=model_name, temperature=0.0, max_tokens=5, timeout=10)
 
 def get_llm(model_alias: str = "A", max_tokens: int = None) -> ChatGroq:
     # Returns a ChatGroq LLM based on environment alias.

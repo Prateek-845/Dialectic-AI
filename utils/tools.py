@@ -1,5 +1,7 @@
 import asyncio
+import re
 from duckduckgo_search import DDGS
+from langchain_core.messages import HumanMessage
 
 def _sync_web_search(query: str) -> str:
     # Performs a web search using the synchronous DDGS client.
@@ -21,9 +23,6 @@ async def perform_web_search(query: str) -> str:
     # Offloads the synchronous DuckDuckGo search to a separate worker thread.
     return await asyncio.to_thread(_sync_web_search, query)
 
-
-import re
-from langchain_core.messages import HumanMessage
 
 def extract_tag(content: str, tag: str) -> str:
     # Extracts text within XML-like tags, falling back to stripping <think>.

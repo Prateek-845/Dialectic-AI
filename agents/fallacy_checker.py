@@ -1,21 +1,20 @@
 # agents/fallacy_checker.py
 # Agent Node: The Fallacy Checker.
 # Penalizes Authority Scores if Ad Hominem or Emotional Appeals are detected.
+import asyncio
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel
 from state import GraphState
 from config import get_llm
 
-import asyncio
+class FallacyCheckResult(BaseModel):
+    has_fallacy: bool
+    reasoning: str
+    penalty: float
 
 async def fallacy_checker_node(state: GraphState) -> dict:
     llm = get_llm("MEDIATOR", max_tokens=150)
     
-    class FallacyCheckResult(BaseModel):
-        has_fallacy: bool
-        reasoning: str
-        penalty: float
-
     async def check_fallacy(text: str, current_score: float) -> tuple[float, str]:
         if not text: return current_score, ""
         prompt = f"Analyze this argument for severe logical fallacies. Argument: {text}\nIf it contains a severe fallacy, set 'has_fallacy' to true, explain the 'reasoning', and set 'penalty' to 0.2. Otherwise, set penalty to 0.0."

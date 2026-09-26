@@ -1,17 +1,17 @@
 # agents/fact_checker.py
-# Algorithmic Node (No LLM): The Fact Checker.
-# Uses spaCy for Entity overlap, DeBERTa for Contradiction, and generates Highlighted HTML.
+# Algorithmic Node: The Fact Checker.
+# Uses spaCy for Entity overlap, Groq LLM for Contradiction detection, and generates Highlighted HTML.
+import re
 import asyncio
-import numpy as np
 from state import GraphState
-from config import load_spacy_model, load_nli_model
+from config import load_spacy_model, get_nli_llm
 from utils.tools import perform_web_search
 
 async def fact_checker_node(state: GraphState) -> dict:
     article, sum_a, sum_b = state["original_article"], state.get("agent_a_summary", ""), state.get("agent_b_summary", "")
     
     nlp = load_spacy_model()
-    nli_model = load_nli_model()
+    nli_llm = get_nli_llm()
     iteration = state.get("iteration", 0)
     
     doc_art = nlp(article)
@@ -31,7 +31,6 @@ async def fact_checker_node(state: GraphState) -> dict:
             total_ents += 1
             highlighted_words.append(summary_text[last_idx:ent.start_char])
 
-            import re
             ent_clean = ent.text.lower().replace("'s", "").replace("’s", "")
             ent_clean = re.sub(r'^[^\w]+|[^\w]+$', '', ent_clean).strip()
             
@@ -61,15 +60,21 @@ async def fact_checker_node(state: GraphState) -> dict:
         highlighted_words.append(summary_text[last_idx:])
         base_score = (cited / total_ents) if total_ents > 0 else 0.5
         
+        # NLI contradiction check via Groq LLM (zero extra memory, YES/NO answer)
         penalty = 0.0
-        if nli_model:
-            sentences = [sent.text for sent in doc_sum.sents]
-            for sent in sentences:
-                logits = nli_model.predict([[article[:1000], sent]])
-                probs = np.exp(logits) / np.sum(np.exp(logits))
-                if probs[0][0] > 0.85: # Contradiction label
+        sentences = [sent.text.strip() for sent in doc_sum.sents if len(sent.text.strip()) > 20]
+        for sent in sentences:
+            try:
+                nli_prompt = (
+                    f"Does this sentence CONTRADICT the article? Answer only YES or NO.\n\n"
+                    f"Article (excerpt): {article[:500]}\n\nSentence: {sent}"
+                )
+                result = await nli_llm.ainvoke(nli_prompt)
+                if "YES" in result.content.upper():
                     penalty = 0.5
                     break
+            except Exception:
+                pass  # If the NLI call fails, skip penalty gracefully
                     
         final_score = max(0.0, min(1.0, base_score * (1.0 - penalty)))
         return round(float(final_score), 3), "".join(highlighted_words)
